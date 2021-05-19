@@ -2,9 +2,14 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import mysql.connector
-
+from addfunc import add_citizen
+from updatefunc import update_citizen
+from delfunc import delete_citizen
+from reffunc import refresh
+from searchfunc import search
 root = Tk()
-class mainwindow():
+#gui
+class mainwindow1():
     def __init__(self):
         self.root = root
         self.root.title("PUBLIC GOVERNMENT SERVICE INFORMATION MANAGEMENT SYSTEM")
@@ -38,7 +43,6 @@ class mainwindow():
 
         self.year_choice = ttk.Spinbox(self.frame1, from_= 1950, to = 2021, font=("times new roman", 12, "bold"))
         self.year_choice.place(x=600, y=90, width=120)
-        self.year_choice.config(state="readonly")
         self.year_choice.set("  -Select year-  ")
 
         self.cccd = Label(self.frame1, text="Citizen identification", font=("times new roman", 12, "bold"), fg="black", bg="#B0C4D3")
@@ -81,16 +85,16 @@ class mainwindow():
         self.marital_choice.place(x=600, y=280, width=120)
         self.marital_choice.config(state="readonly")
 
-        self.addbutton = Button(self.frame1, text="Add", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF',bd=5, relief=GROOVE, command=lambda:self.add_citizen())
+        self.addbutton = Button(self.frame1, text="Add", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF',bd=5, relief=GROOVE, command=lambda:add_citizen(self))
         self.addbutton.place(x=770, y=60, width=200)
 
-        self.updatebutton = Button(self.frame1, text="Update", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda :self.update_citizen())
+        self.updatebutton = Button(self.frame1, text="Update", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda :update_citizen(self))
         self.updatebutton.place(x=770, y=130, width=200)
 
-        self.deletebutton = Button(self.frame1, text="Delete", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:self.delete_citizen())
+        self.deletebutton = Button(self.frame1, text="Delete", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:delete_citizen(self))
         self.deletebutton.place(x=770, y=200, width=200)
 
-        self.refreshbutton = Button(self.frame1, text="Refresh", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:self.refresh())
+        self.refreshbutton = Button(self.frame1, text="Refresh", font=("times new roman", 15, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:refresh(self))
         self.refreshbutton.place(x=770, y=270, width=200)
 
         self.frame2=Frame(self.root, relief=FLAT, bg="#B0C4DE")
@@ -114,7 +118,7 @@ class mainwindow():
         self.search_entry = Entry(self.frame4, font=("times new roman", 12, "bold"))
         self.search_entry.place(x=600, y=10, width=250)
 
-        self.searchbutton = Button(self.frame4, text="Search", font=("times new roman", 12, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:self.search())
+        self.searchbutton = Button(self.frame4, text="Search", font=("times new roman", 12, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:search(self))
         self.searchbutton.place(x=900, y=10, width=100)
 
         self.showbutton = Button(self.frame4, text="Show", font=("times new roman", 12, "bold"), fg='black', bg='#0080FF', bd=5, relief=GROOVE, command=lambda:self.showall())
@@ -149,85 +153,7 @@ class mainwindow():
         self.treeview.place(x=5,y=65, width=1485)
         self.show()
 
-    def add_citizen(self):
-        if self.fentry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.lentry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.year_choice.get()=="  -Select year-  ":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.cccd_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.where_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.gender_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.folk_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.contact_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.marital_choice.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        else:
-            db = mysql.connector.connect(user='root',password='Uyenhung2596',host='localhost',database='midterm',auth_plugin='mysql_native_password')
-            command_handler = db.cursor()
-            querry_vals = (self.fentry.get(),self.lentry.get(),self.year_choice.get(),self.cccd_entry.get(),self.where_entry.get(),self.gender_entry.get(),self.folk_entry.get(),self.contact_entry.get(),self.marital_choice.get())
-            command_handler.execute("INSERT INTO information(Firstname, Lastname, Year_of_birth, Citizen_Identification, Home_town, Gender, Folk, Contact_phone, Marital_status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)",querry_vals)
-            db.commit()
-            db.close()
-            messagebox.showinfo("Success", "Added Successfully")
-
-    def update_citizen(self):
-        if self.fentry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.lentry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.year_choice.get()=="  -Select year-  ":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.cccd_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.where_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.gender_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.folk_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.contact_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        elif self.marital_choice.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        else:
-            db = mysql.connector.connect(user='root', password='Uyenhung2596', host='localhost', database='midterm', auth_plugin='mysql_native_password')
-            command_handler = db.cursor()
-            querry_vals = (self.fentry.get(),self.lentry.get(),self.year_choice.get(),self.cccd_entry.get(),self.where_entry.get(),self.gender_entry.get(),self.folk_entry.get(),self.contact_entry.get(),self.marital_choice.get())
-            command_handler.execute("UPDATE information set Firstname=%s, Lastname=%s, Year_of_birth=%s, Citizen_Identification=%s, Home_town=%s, Gender=%s, Folk=%s, Contact_phone=%s, Marital_status=%s",querry_vals)
-            db.commit()
-            db.close()
-            messagebox.showinfo("Success", "Updated Successfully")
-
-    def delete_citizen(self):
-        if self.cccd_entry.get()=="":
-            messagebox.showerror("Error", "All fields are required!")
-        else:
-            db = mysql.connector.connect(user='root', password='Uyenhung2596', host='localhost', database='midterm', auth_plugin='mysql_native_password')
-            command_handler = db.cursor()
-            idcheck=(self.cccd_entry.get(),)
-            command_handler.execute("DELETE from information WHERE Citizen_Identification= %s", idcheck)
-            db.commit()
-            db.close()
-            messagebox.showinfo("Success", "Deleted Successfully")
-
-    def refresh(self):
-        self.fentry.delete(0,END)
-        self.lentry.delete(0,END)
-        self.year_choice.set("  -Select year-  ")
-        self.cccd_entry.delete(0,END)
-        self.where_entry.delete(0,END)
-        self.gender_entry.set("")
-        self.folk_entry.delete(0,END)
-        self.contact_entry.delete(0,END)
-        self.marital_choice.set("")
-
+#show function
     def show(self):
         db = mysql.connector.connect(user='root', password='Uyenhung2596', host='localhost', database='midterm', auth_plugin='mysql_native_password')
         command_handler = db.cursor()
@@ -239,44 +165,12 @@ class mainwindow():
                 self.treeview.insert('','end',values=i)
                 db.commit()
 
-    def search(self):
-        if self.searchcombo.get()=="Lastname":
-            db = mysql.connector.connect(user='root', password='Uyenhung2596', host='localhost', database='midterm',auth_plugin='mysql_native_password')
-            command_handler = db.cursor()
-            command_handler.execute("SELECT * from information where Lastname=%s",(self.search_entry.get(),))
-            self.row = command_handler.fetchall()
-            if len(self.row) != 0:
-                self.treeview.delete(*self.treeview.get_children())
-                for i in self.row:
-                    self.treeview.insert('', 'end', values=i)
-                    db.commit()
-        elif self.searchcombo.get()=="CI":
-            db = mysql.connector.connect(user='root', password='Uyenhung2596', host='localhost', database='midterm',auth_plugin='mysql_native_password')
-            command_handler = db.cursor()
-            command_handler.execute("SELECT * from information where Citizen_Identification=%s",(self.search_entry.get(),))
-            self.row = command_handler.fetchall()
-            if len(self.row) != 0:
-                self.treeview.delete(*self.treeview.get_children())
-                for i in self.row:
-                    self.treeview.insert('', 'end', values=i)
-                    db.commit()
-        elif self.searchcombo.get()=="Contact":
-            db = mysql.connector.connect(user='root', password='Uyenhung2596', host='localhost', database='midterm',auth_plugin='mysql_native_password')
-            command_handler = db.cursor()
-            command_handler.execute("SELECT * from information where Contact_phone=%s",(self.search_entry.get(),))
-            self.row = command_handler.fetchall()
-            if len(self.row) != 0:
-                self.treeview.delete(*self.treeview.get_children())
-                for i in self.row:
-                    self.treeview.insert('', 'end', values=i)
-                    db.commit()
-        else:
-            messagebox.showerror("Error","Please select true option")
+
 
     def showall(self):
         self.show()
 
 
 
-m = mainwindow()
+m = mainwindow1()
 root.mainloop()
